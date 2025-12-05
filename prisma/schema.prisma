@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id          String    @id @default(uuid())
+  email       String    @unique
+  password    String?
+  firstName   String
+  lastName    String
+  role        Role      @default(TENANT)
+  googleId    String?   @unique
+  createdAt   DateTime  @updatedAt
+
+  properties  Property[]
+}
+
+enum Role {
+  TENANT
+  LANDLORD
+  ADMIN
+}
+
+model Property {
+  id           String   @id @default(uuid())
+  title        String
+  description  String?
+  address      String
+  city         String
+  state        String
+  price        Float
+  bedrooms     Int
+  images       String[]
+  status       Status
+  landlordId   String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  landlord     User   @relation(fields: [landlordId], references: [id])
+}
+
+enum Status {
+  AVAILABLE
+  RENTED
+}
