@@ -1,13 +1,15 @@
 import type { Request, Response } from 'express'
-// import { PrismaClient } from '../generated/prisma/client.ts'
-import { hashPassword, comparePassword } from '../utils/hashPassword.ts'
-import { generateToken } from '../utils/generateToken.ts'
-import { prisma } from '../lib/prisma.ts'
+import { hashPassword, comparePassword } from '../utils/hashPassword'
+import { generateToken } from '../utils/generateToken'
+import { prisma } from '../lib/prisma'
 import passport from 'passport'
 import { log } from 'console'
+
 export const register = async (req: Request, res: Response) => {
     const { email, password, firstName, lastName, role = 'TENANT' } = req.body;
     log(req.body);
+
+    if (!email && !password && !firstName && !lastName && !role) return res.status(400).json({ message: "Please provide credentials" });
 
     try {
         const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -23,7 +25,7 @@ export const register = async (req: Request, res: Response) => {
                 lastName,
                 role
             },
-            select: {id: true, email: true, firstName: true, lastName: true, role: true}
+            select: { id: true, email: true, firstName: true, lastName: true, role: true }
         });
 
     } catch (error) {
@@ -33,16 +35,24 @@ export const register = async (req: Request, res: Response) => {
 }
 
 export const login = async (req: Request, res: Response) => {
+
+    console.log('🔍 METHOD:', req.method);
+    console.log('🔍 CONTENT-TYPE:', req.get('Content-Type'));
+    console.log('🔍 BODY:', req.body);
+    console.log('🔍 RAW REQUEST KEYS:', Object.keys(req));
+    
     const { email, password } = req.body;
 
+    if (!email && !password) return res.status(400).json({ message: 'Please provide credentials' })
+
     try {
-        const user = await prisma.user.findUnique({ where: { email }})
+        const user = await prisma.user.findUnique({ where: { email } })
         if (!user || !user.password) {
-            return res.status(400).json({ error: 'Invalid credentials'})
+            return res.status(400).json({ error: 'Invalid credentials' })
         }
         const isMatch = await comparePassword(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ error: 'Invalid credentials'})
+            return res.status(400).json({ error: 'Invalid credentials' })
         }
         const token = generateToken(user.id, user.email, user.role)
         res.json({
@@ -57,16 +67,16 @@ export const login = async (req: Request, res: Response) => {
         })
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Server error'})
+        res.status(500).json({ error: 'Server error' })
     }
 }
 
-export const googleLogin = passport.authenticate('google', { scope: ['profile', 'email']})
+export const googleLogin = passport.authenticate('google', { scope: ['profile', 'email'] })
 
 export const googleCallback = async (req: Request, res: Response) => {
     const user = req.user as any;
     if (!user) {
-        return res.status(400).json({ error: 'Google llogin failed' });
+        return res.status(400).json({ error: 'Google login failed' });
     }
 
     const token = generateToken(user.id, user.email, user.role);

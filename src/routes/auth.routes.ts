@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import passport from 'passport';
-import { register, login, googleLogin, googleCallback } from '../controllers/auth.controller.ts';
+import { register, login } from '../controllers/auth.controller';
+import { googleLogin, googleCallback } from '../controllers/auth.controller';
 
 const router = Router();
 
