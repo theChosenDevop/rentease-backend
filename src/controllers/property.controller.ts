@@ -46,11 +46,9 @@ export const createProperty = async (req: Request, res: Response) => {
     }
     res.status(500).json({ error: 'Server error' });
   }
-};
+}
 
-/**
- * Get all properties
- */
+
 export const getProperties = async (req: Request, res: Response) => {
   try {
     const { location, minPrice, maxPrice, bedrooms } = req.query;
@@ -165,7 +163,7 @@ export const updateProperty = async (req: Request, res: Response) => {
     }
     res.status(500).json({ error: 'Server error' });
   }
-};
+}
 
 export const deleteProperty = async (req: Request, res: Response) => {
   try {

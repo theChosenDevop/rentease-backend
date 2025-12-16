@@ -1,22 +1,3 @@
-// {
-//   "compilerOptions": {
-//     "target": "ES2022",
-//     "module": "NodeNext",
-//     "moduleResolution": "NodeNext",
-//     "esModuleInterop": true,
-//     "strict": true,
-//     "skipLibCheck": true,
-//     "allowImportingTsExtensions": false, // keep false if using .js in imports
-//     "verbatimModuleSyntax": false,       // important: let TS rewrite imports
-//     "noEmit": false
-//   },
-//   "ts-node": {
-//     "esm": true
-//   },
-//   "include": ["src/**/*"]
-// }
-
-
 {
   "compilerOptions": {
     "target": "ES2017",
